@@ -1,19 +1,29 @@
 package com.exemplo.biblioteca;
 
+import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
-import java.util.ArrayList;
 import java.util.Date;
 
 public class EmprestimoTest {
 
+    private Livro livro;
+    private Usuario usuario;
+    private Date dataEmprestimo;
+    private Emprestimo emprestimo;
+
+    @Before
+    public void setUp() {
+        livro = mock(Livro.class);
+        usuario = mock(Usuario.class);
+        dataEmprestimo = new Date();
+        emprestimo = new Emprestimo(livro, usuario, dataEmprestimo, null);
+    }
+
     @Test
     public void testRegistrarEmprestimo() {
-        Livro livro = new Livro("O Senhor dos Anéis", "J.R.R. Tolkien");
-        Usuario usuario = new Usuario("João", 1, new ArrayList<>());
-        Date dataEmprestimo = new Date();
-        Emprestimo emprestimo = new Emprestimo(livro, usuario, dataEmprestimo, null);
         assertNotNull(emprestimo);
         assertEquals(livro, emprestimo.getLivro());
         assertEquals(usuario, emprestimo.getUsuario());
@@ -22,13 +32,9 @@ public class EmprestimoTest {
 
     @Test
     public void testRegistrarDevolucao() {
-        Livro livro = new Livro("1984", "George Orwell");
-        Usuario usuario = new Usuario("João", 1, new ArrayList<>());
-        Date dataEmprestimo = new Date();
-        Emprestimo emprestimo = new Emprestimo(livro, usuario, dataEmprestimo, null);
         Date dataDevolucao = new Date();
         emprestimo.registrarDevolucao(dataDevolucao);
         assertEquals(dataDevolucao, emprestimo.getDataDevolucao());
-        assertTrue(livro.isDisponivel());
+        verify(livro).devolver();
     }
 }

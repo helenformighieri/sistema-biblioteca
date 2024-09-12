@@ -1,29 +1,36 @@
 package com.exemplo.biblioteca;
 
+import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
+
 import java.util.ArrayList;
+
+import static org.mockito.Mockito.*;
 
 public class BibliotecarioTest {
 
+    private Bibliotecario bibliotecario;
+    private Usuario usuario;
+    private Livro livro;
+
+    @Before
+    public void setUp() {
+        bibliotecario = new Bibliotecario("Maria", 1);
+        usuario = mock(Usuario.class);
+        livro = mock(Livro.class);
+    }
+
     @Test
     public void testGerenciarEmprestimo() {
-        Bibliotecario bibliotecario = new Bibliotecario("Maria", 1);
-        Usuario usuario = new Usuario("João", 1, new ArrayList<>());
-        Livro livro = new Livro("O Senhor dos Anéis", "J.R.R. Tolkien");
+        when(livro.isDisponivel()).thenReturn(true);
         bibliotecario.gerenciarEmprestimo(livro, usuario);
-        assertFalse(livro.isDisponivel());
-        assertTrue(usuario.getLivrosEmprestados().contains(livro));
+        verify(usuario).emprestarLivro(livro);
     }
 
     @Test
     public void testGerenciarDevolucao() {
-        Bibliotecario bibliotecario = new Bibliotecario("Maria", 1);
-        Usuario usuario = new Usuario("João", 1, new ArrayList<>());
-        Livro livro = new Livro("1984", "George Orwell");
-        usuario.emprestarLivro(livro);
+        when(usuario.getLivrosEmprestados()).thenReturn(new ArrayList<>());
         bibliotecario.gerenciarDevolucao(livro, usuario);
-        assertTrue(livro.isDisponivel());
-        assertFalse(usuario.getLivrosEmprestados().contains(livro));
+        verify(usuario).devolverLivro(livro);
     }
 }

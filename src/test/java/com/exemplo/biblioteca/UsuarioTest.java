@@ -1,38 +1,51 @@
 package com.exemplo.biblioteca;
 
-import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
 import java.util.ArrayList;
 
+@ExtendWith(MockitoExtension.class)
 public class UsuarioTest {
+
+    private Usuario usuario;
+
+    @Mock
+    private Livro livro;
+
+    @BeforeEach
+    public void setUp() {
+        usuario = new Usuario("João", 1, new ArrayList<>());
+    }
 
     @Test
     public void testEmprestarLivro() {
-        Usuario usuario = new Usuario("João", 1, new ArrayList<>());
-        Livro livro = new Livro("O Senhor dos Anéis", "J.R.R. Tolkien");
+        when(livro.isDisponivel()).thenReturn(true);
         usuario.emprestarLivro(livro);
-        assertFalse(livro.isDisponivel());
+        verify(livro).emprestar();
         assertTrue(usuario.getLivrosEmprestados().contains(livro));
     }
 
     @Test
     public void testDevolverLivro() {
-        Usuario usuario = new Usuario("João", 1, new ArrayList<>());
-        Livro livro = new Livro("1984", "George Orwell");
+        when(livro.isDisponivel()).thenReturn(true);
         usuario.emprestarLivro(livro);
         usuario.devolverLivro(livro);
-        assertTrue(livro.isDisponivel());
+        verify(livro).devolver();
         assertFalse(usuario.getLivrosEmprestados().contains(livro));
     }
 
     @Test
     public void testEmprestarLivroCondicional() {
-        Assumptions.assumeTrue("true".equals(System.getenv("TEST_CONDICIONAL")));
-        Usuario usuario = new Usuario("João", 1, new ArrayList<>());
-        Livro livro = new Livro("O Senhor dos Anéis", "J.R.R. Tolkien");
+        when(livro.isDisponivel()).thenReturn(true);
         usuario.emprestarLivro(livro);
-        assertFalse(livro.isDisponivel());
+        verify(livro).emprestar();
         assertTrue(usuario.getLivrosEmprestados().contains(livro));
     }
 }
